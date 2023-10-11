@@ -18,37 +18,44 @@ const AuthForm = () => {
     const EnteredEmail = emailInputref.current.value
     const EnteredPossward = posswardInputref.current.value
     setisLoading(true)
+    let url
     if (isLogin) {
+      url = 'https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=AIzaSyDsLdCMlyVs7jwRRi_FBZq75HeClwfk7pQ'
      
     } else {
-      fetch('https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=AIzaSyDIuqYiLD1xgngovAbWDHA3dE24mjdhKjs',{
-        method:'POST',
-        body:JSON.stringify({
-          email:EnteredEmail,
-          password:EnteredPossward,
-          returnSecureToken:true
-        }),
-        headers:{
-          'Content-Type': 'application/json'
-        }
-      }).then(response=>{
-        setisLoading(false)
-        if(response.ok){
-          //...
-        }else{
-          return response.json().then(data=>{
-            let errorMessage = 'Authentication failed'
-            if(data&&data.error&&data.error.message){
-              errorMessage = data.error.message 
-            }
-            alert(errorMessage)
-
-            console.log(data)
-          })
-        }
-      })
-      
+        url = 'https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=AIzaSyDsLdCMlyVs7jwRRi_FBZq75HeClwfk7pQ'
     }
+
+    fetch(url,{
+      method:'POST',
+      body:JSON.stringify({
+        email:EnteredEmail,
+        password:EnteredPossward,
+        returnSecureToken:true
+      }),
+      headers:{
+        'Content-Type': 'application/json'
+      }
+    }).then(response=>{
+      setisLoading(false)
+      if(response.ok){
+        return response.json()
+      }else{
+        return response.json().then(data=>{
+          let errorMessage = 'Authentication failed'
+          if(data&&data.error&&data.error.message){
+            errorMessage = data.error.message 
+            
+            throw new Error(errorMessage)
+            
+          }
+          
+          console.log(data)
+        })
+      }
+    }).then(data=>{console.log(data)}).catch((error)=>{
+        alert(error.message)
+    })
   }
   return (
     <section className={classes.auth}>
