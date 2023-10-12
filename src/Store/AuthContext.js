@@ -5,6 +5,7 @@ const AuthContext = React.createContext({
     isLoggedIn:false,
     Login:(token)=>{},
     Logout:()=>{}
+
 })
 
 export  const AuthContextProvider = (props)=>{
@@ -25,6 +26,14 @@ export  const AuthContextProvider = (props)=>{
     const logoutHandler = ()=>{
         settoken(null)
         localStorage.removeItem('token')
+        localStorage.removeItem('email')
+        localStorage.removeItem('idtoken')
+    }
+
+    if(token){
+        setTimeout(()=>{
+            logoutHandler()
+        },5000)
     }
 
     const contextValue = {
